@@ -17,12 +17,12 @@ public class Resources {
   /**
    * The wheel radius in centimeters.
    */
-  public static final double WHEEL_RAD = 2.130;
+  public static final double WHEEL_RAD = 2.130; //Maybe change to 2.20, but this value given is more or less accurate
   
   /**
    * The robot width in centimeters.
    */
-  public static final double TRACK = 15;
+  public static final double TRACK = 17.7;
   
   /**
    * The speed at which the robot moves forward in degrees per second.
