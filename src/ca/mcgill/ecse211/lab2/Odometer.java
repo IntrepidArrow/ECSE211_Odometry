@@ -1,6 +1,7 @@
 package ca.mcgill.ecse211.lab2;
 
 import java.math.MathContext;
+import ca.mcgill.ecse211.lab2.SquareDriver;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -62,6 +63,8 @@ public class Odometer implements Runnable {
   // Motor-related variables
   private static int leftMotorTachoCount = 0;
   private static int rightMotorTachoCount = 0;
+  private static int lastLeftTachoCount;
+  private static int lastRightTachoCount;
 
   /**
    * The odometer update period in ms.
@@ -99,36 +102,40 @@ public class Odometer implements Runnable {
     //Clearing tacho count and storing current tacho state
     leftMotor.resetTachoCount();
     rightMotor.resetTachoCount();
-    int lastLeftMotorTachoCount = leftMotor.getTachoCount();
-    int lastRightMotorTachoCount = rightMotor.getTachoCount();
-
-    //variable for calculations
-    int leftTachoChange, rightTachoChange;
-    double distance_left, distance_right, delta_distance, delta_angle, dX, dY;
-
+    
+    lastLeftTachoCount = leftMotor.getTachoCount();
+    lastRightTachoCount = rightMotor.getTachoCount();
+    
+    
+    
     while (true) {
       updateStart = System.currentTimeMillis();
 
+      //temporary variables to store data for positional calculations 
+      double distance_left, distance_right, delta_distance, delta_theta, dX, dY, proportional_theta;
+      
       //getting current tacho counts
       leftMotorTachoCount = leftMotor.getTachoCount();
       rightMotorTachoCount = rightMotor.getTachoCount();
-
-      leftTachoChange = leftMotorTachoCount - lastLeftMotorTachoCount;
-      rightTachoChange = rightMotorTachoCount - lastRightMotorTachoCount;
+      
       //Distance moved by the wheels 
-      distance_left = (Math.PI/180.0)*WHEEL_RAD*leftTachoChange;
-      distance_right = (Math.PI/180.0)*WHEEL_RAD*rightTachoChange;
+      distance_left = Math.PI*WHEEL_RAD*(leftMotorTachoCount - lastLeftTachoCount) /180;
+      distance_right = Math.PI*WHEEL_RAD*(rightMotorTachoCount - lastRightTachoCount) /180;
+      
       //Updating last tacho counts
-      lastLeftMotorTachoCount = leftMotorTachoCount;
-      lastRightMotorTachoCount = rightMotorTachoCount;
+      lastLeftTachoCount = leftMotorTachoCount;
+      lastRightTachoCount = rightMotorTachoCount;
 
-      delta_distance = (distance_left+distance_right)/2.0;
-      delta_angle = (distance_left-distance_right)/TRACK;
-      theta += delta_angle;
-      dX = delta_distance*Math.sin(theta);
-      dY = delta_distance*Math.cos(theta);
+      //updating variables for calculations
+      delta_distance = 0.5*(distance_left+distance_right);
+      delta_theta = (distance_left-distance_right)/TRACK;
+      
+//      proportional_theta = (leftMotorTachoCount - rightMotorTachoCount) * 6.95; //6.95 is subject to change by testing 
+      
+      dX = delta_distance*Math.sin(Math.toRadians(this.theta));
+      dY = delta_distance*Math.cos(Math.toRadians(this.theta));
 
-      odo.update(dX, dY, (delta_angle*180.0)/Math.PI);
+      odo.update(dX, dY, Math.toDegrees(delta_theta));
 
       // this ensures that the odometer only runs once every period
       updateEnd = System.currentTimeMillis();
