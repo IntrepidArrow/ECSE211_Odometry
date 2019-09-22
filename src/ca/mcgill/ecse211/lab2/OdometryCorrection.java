@@ -11,7 +11,7 @@ public class OdometryCorrection implements Runnable {
   //Variables and values to operate color sensor
   //if amplified color intensity value read by sensor is less than this value then black line. 
   //Color sensor values for black line were [0.15,0.24] when tested. Demo floor value = 0.51
-  private final int THRESHOLD = 21; 
+  private final int THRESHOLD = 23; 
   //max(sensor value for black line test)/(Demo floor value) = 0.4705
   private final double INTENSITY_DIFFERENCE_FACTOR = 0.4705; 
   //colorSensor already available from resources
@@ -28,6 +28,10 @@ public class OdometryCorrection implements Runnable {
 
     while (true) {
       correctionStart = System.currentTimeMillis();
+      if (blackLineTrigger()) {
+        System.out.println("Detected: " + blackLineTrigger());
+        Sound.beep();
+      }
       //Main Tasks to complete for the method:
       // TODO Trigger correction (When do I have information to correct?)
       // TODO Calculate new (accurate) robot position
@@ -46,26 +50,24 @@ public class OdometryCorrection implements Runnable {
 
   //TODO: Documentation
   private boolean blackLineTrigger() {
-    boolean status = false;
     color_sensor.fetchSample(sensor_data, 0);
     current_color_value = (int)(sensor_data[0]*100);    //sensor data read in 2dp - convert to integer value to compare
+    //    System.out.println("Recorded Intensity: " + current_color_value);
     //when color intensity is below threshold
     if(current_color_value < THRESHOLD) {
-      status = true;
+      return true;
     }//case: to prevent false trigger if the entire room is made dark. TA Q: What if the lights in the room was turned 
     //off? Would it continuously keep beeping?
-    else if (current_color_value/last_color_value < INTENSITY_DIFFERENCE_FACTOR){
-      status = true;
-    } else {
-      status = false;
+    //    else if (current_color_value/last_color_value < INTENSITY_DIFFERENCE_FACTOR){
+    //      status = true;
+    //    } 
+    else {
+      return false;
     }
-    
-    if (status)
-      Sound.beep();
-    
-    last_color_value = current_color_value; //Update most recent color intensity value detected 
-    
-    return status;
+
+    //    last_color_value = current_color_value; //Update most recent color intensity value detected 
+    //
+    //    return status;
 
   }
 
