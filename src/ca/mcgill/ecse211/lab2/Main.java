@@ -2,7 +2,7 @@
 package ca.mcgill.ecse211.lab2;
 
 import lejos.hardware.Button;
-
+import lejos.robotics.SampleProvider;
 // static import to avoid duplicating variables and make the code easier to read
 import static ca.mcgill.ecse211.lab2.Resources.*;
 
@@ -10,7 +10,6 @@ import static ca.mcgill.ecse211.lab2.Resources.*;
  * The main driver class for the odometry lab.
  */
 public class Main {
-
   /**
    * The main entry point.
    * 
@@ -23,7 +22,8 @@ public class Main {
     //after completing a 360 degree rotation around the same spot 
 //    leftMotor.rotate(convertAngle(360.0), true);
 //    rightMotor.rotate(-convertAngle(360.0), false);
-    
+
+    //Provided Code:
     new Thread(odometer).start(); // TODO implement Odometer
     
     buttonChoice = chooseDriveInSquareOrFloatMotors();
