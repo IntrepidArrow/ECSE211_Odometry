@@ -18,6 +18,12 @@ public class Main {
    */
   public static void main(String[] args) {
     int buttonChoice;
+    
+    //Test to verify if track is of correct length or not - correct if robot returns to approximately same position
+    //after completing a 360 degree rotation around the same spot 
+//    leftMotor.rotate(convertAngle(360.0), true);
+//    rightMotor.rotate(-convertAngle(360.0), false);
+    
     new Thread(odometer).start(); // TODO implement Odometer
     
     buttonChoice = chooseDriveInSquareOrFloatMotors();
@@ -99,5 +105,10 @@ public class Main {
       // There is nothing to be done here
     }
   }
-  
+  public static int convertAngle(double angle) {
+    return convertDistance(Math.PI * TRACK * angle / 360.0);
+  }
+  public static int convertDistance(double distance) {
+    return (int) ((180.0 * distance) / (Math.PI * WHEEL_RAD));
+  }
 }
