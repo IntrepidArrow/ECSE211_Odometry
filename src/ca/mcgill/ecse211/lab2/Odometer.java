@@ -112,7 +112,7 @@ public class Odometer implements Runnable {
       updateStart = System.currentTimeMillis();
 
       //temporary variables to store data for positional calculations 
-      double distance_left, distance_right, delta_distance, delta_theta, dX, dY, proportional_theta;
+      double distance_left, distance_right, delta_distance, dX, dY;
       
       //getting current tacho counts
       leftMotorTachoCount = leftMotor.getTachoCount();
@@ -128,14 +128,13 @@ public class Odometer implements Runnable {
 
       //updating variables for calculations
       delta_distance = 0.5*(distance_left+distance_right);
-      delta_theta = (distance_left-distance_right)/TRACK;
-      
-//      proportional_theta = (leftMotorTachoCount - rightMotorTachoCount) * 6.95; //6.95 is subject to change by testing 
+//      delta_theta = (distance_left-distance_right)/17.7;
+//      delta_theta = (leftMotor.getTachoCount() - rightMotor.getTachoCount())/6.953; //6.95 is subject to change by testing 
       
       dX = delta_distance*Math.sin(Math.toRadians(this.theta));
       dY = delta_distance*Math.cos(Math.toRadians(this.theta));
 
-      odo.update(dX, dY, Math.toDegrees(delta_theta));
+      odo.update(dX, dY);
 
       // this ensures that the odometer only runs once every period
       updateEnd = System.currentTimeMillis();
@@ -170,7 +169,7 @@ public class Odometer implements Runnable {
 
       position[0] = x;
       position[1] = y;
-      position[2] = theta;
+      position[2] =  theta;
     } catch (InterruptedException e) {
       e.printStackTrace();
     } finally {
@@ -188,13 +187,14 @@ public class Odometer implements Runnable {
    * @param dy
    * @param dtheta
    */
-  public void update(double dx, double dy, double dtheta) {
+  public void update(double dx, double dy) {
     lock.lock();
     isResetting = true;
     try {
       x += dx;
       y += dy;
-      theta = (theta + (360 + dtheta) % 360) % 360; // keeps the updates within 360 degrees
+      double pureTheta = (leftMotorTachoCount-rightMotorTachoCount)/6.953;
+      theta = (360+pureTheta)%360; // keeps the updates within 360 degrees
       isResetting = false;
       doneResetting.signalAll(); // Let the other threads know we are done resetting
     } finally {
