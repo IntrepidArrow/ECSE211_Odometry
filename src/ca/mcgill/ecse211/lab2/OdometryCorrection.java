@@ -10,10 +10,12 @@ public class OdometryCorrection implements Runnable {
 
   //Variables and values to operate color sensor
   //if amplified color intensity value read by sensor is less than this value then black line. 
+
   //Color sensor values for black line were [0.15,0.29] when tested. Demo floor value = [0.51,0.56]
   private final int THRESHOLD = 35; 
   //max(sensor value for black line test)/max(Demo floor value) = 0.339285
-  //  private final double INTENSITY_DIFFERENCE_FACTOR = 0.580; 
+  //private final double INTENSITY_DIFFERENCE_FACTOR = 0.580; 
+
   //colorSensor already available from resources
   private SampleProvider color_sensor = colorSensor.getRedMode();
   private float[] sensor_data = new float[color_sensor.sampleSize()]; //array of sensor readings 
@@ -24,11 +26,28 @@ public class OdometryCorrection implements Runnable {
    */
   public void run() {
     long correctionStart, correctionEnd;
-
+    int tileCount_X = 0;
+    int tileCount_Y = 0;
     while (true) {
       correctionStart = System.currentTimeMillis();
       if (blackLineTrigger()) {
         Sound.beep();
+        if(odometer.getXYT()[2] > 340 || odometer.getXYT()[2] < 20) {
+          tileCount_Y++;
+          odometer.setY(TILE_SIZE*tileCount_Y);
+
+        } else if(odometer.getXYT()[2] > 70 && odometer.getXYT()[2] < 110) {
+          tileCount_X++;
+          odometer.setX(TILE_SIZE*tileCount_X);
+
+        } else if(odometer.getXYT()[2] > 160 && odometer.getXYT()[2] < 200) {
+          odometer.setY(TILE_SIZE*tileCount_Y);
+          tileCount_Y--;
+
+        } else if(odometer.getXYT()[2] > 250 && odometer.getXYT()[2] < 290) {
+          odometer.setX(TILE_SIZE*tileCount_X);
+          tileCount_X--;
+        }
       }
 
       //Main Tasks to complete for the method:
@@ -36,8 +55,6 @@ public class OdometryCorrection implements Runnable {
       // TODO Calculate new (accurate) robot position
       // TODO Update odometer with new calculated (and more accurate) values, eg:
       //odometer.setXYT(0.3, 19.23, 5.0);
-
-      //Method Body:
 
       // this ensures the odometry correction occurs only once every period
       correctionEnd = System.currentTimeMillis();
