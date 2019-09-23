@@ -36,9 +36,6 @@ public class Display implements Runnable {
       LCD.drawString("X: " + numberFormat.format(position[0]), 0, 0);
       LCD.drawString("Y: " + numberFormat.format(position[1]), 0, 1);
       LCD.drawString("T: " + numberFormat.format(position[2]), 0, 2);
-//      LCD.drawString("Prop Angle " + (leftMotor.getTachoCount() - rightMotor.getTachoCount())/6.953, 0, 4);
-//      color_sensor.fetchSample(sensor_data, 0);
-//      LCD.drawString("INTENSITY: " + sensor_data[0], 0, 4);
       
       // this ensures that the data is updated only once every period
       updateEnd = System.currentTimeMillis();

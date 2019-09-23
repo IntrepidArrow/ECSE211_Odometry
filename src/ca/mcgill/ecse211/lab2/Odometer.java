@@ -102,35 +102,33 @@ public class Odometer implements Runnable {
     //Clearing tacho count and storing current tacho state
     leftMotor.resetTachoCount();
     rightMotor.resetTachoCount();
-    
+
     lastLeftTachoCount = leftMotor.getTachoCount();
     lastRightTachoCount = rightMotor.getTachoCount();
-    
-    
-    
+
+
+
     while (true) {
       updateStart = System.currentTimeMillis();
 
       //temporary variables to store data for positional calculations 
       double distance_left, distance_right, delta_distance, dX, dY;
-      
+
       //getting current tacho counts
       leftMotorTachoCount = leftMotor.getTachoCount();
       rightMotorTachoCount = rightMotor.getTachoCount();
-      
+
       //Distance moved by the wheels 
       distance_left = Math.PI*WHEEL_RAD*(leftMotorTachoCount - lastLeftTachoCount) /180;
       distance_right = Math.PI*WHEEL_RAD*(rightMotorTachoCount - lastRightTachoCount) /180;
-      
+
       //Updating last tacho counts
       lastLeftTachoCount = leftMotorTachoCount;
       lastRightTachoCount = rightMotorTachoCount;
 
       //updating variables for calculations
       delta_distance = 0.5*(distance_left+distance_right);
-//      delta_theta = (distance_left-distance_right)/17.7;
-//      delta_theta = (leftMotor.getTachoCount() - rightMotor.getTachoCount())/6.953; //6.95 is subject to change by testing 
-      
+
       dX = delta_distance*Math.sin(Math.toRadians(this.theta));
       dY = delta_distance*Math.cos(Math.toRadians(this.theta));
 
@@ -182,10 +180,14 @@ public class Odometer implements Runnable {
   /**
    * Adds dx, dy and dtheta to the current values of x, y and theta, respectively. Useful for
    * odometry.
-   * 
+   * Note: The method has been modified from the provided skeleton code. Provided method took 3 parameters where the 
+   * third parameter was the Theta value to update.
+   * Method now takes only 2 parameters to update the x and y direction movement of the robot.
+   * Theta value is now directly calculated by the tacho counts of the left and right motors of the robot. Value 
+   * calculation does not depend on the distance calculations for the left and right motors which was mathematically 
+   * derived.
    * @param dx
    * @param dy
-   * @param dtheta
    */
   public void update(double dx, double dy) {
     lock.lock();
