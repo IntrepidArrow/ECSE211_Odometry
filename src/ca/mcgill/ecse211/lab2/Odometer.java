@@ -193,7 +193,7 @@ public class Odometer implements Runnable {
     try {
       x += dx;
       y += dy;
-      double pureTheta = (leftMotorTachoCount-rightMotorTachoCount)/6.953;
+      double pureTheta = (leftMotorTachoCount-rightMotorTachoCount)/7.1111;
       theta = (360+pureTheta)%360; // keeps the updates within 360 degrees
       isResetting = false;
       doneResetting.signalAll(); // Let the other threads know we are done resetting

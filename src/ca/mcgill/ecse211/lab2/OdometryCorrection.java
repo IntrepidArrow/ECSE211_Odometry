@@ -42,7 +42,7 @@ public class OdometryCorrection implements Runnable {
 
         } else if(odometer.getXYT()[2] > 160 && odometer.getXYT()[2] < 200) {
           odometer.setY(TILE_SIZE*tileCount_Y);
-          tileCount_Y--;
+          tileCount_Y--;    
 
         } else if(odometer.getXYT()[2] > 250 && odometer.getXYT()[2] < 290) {
           odometer.setX(TILE_SIZE*tileCount_X);

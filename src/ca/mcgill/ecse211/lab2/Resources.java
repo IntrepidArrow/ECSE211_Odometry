@@ -17,7 +17,7 @@ public class Resources {
   /**
    * The wheel radius in centimeters.
    */
-  public static final double WHEEL_RAD = 2.150; //Maybe change to 2.20, but this value given is more or less accurate
+  public static final double WHEEL_RAD = 2.123; //Maybe change to 2.20, but this value given is more or less accurate
   
   /**
    * The robot width in centimeters.
@@ -27,7 +27,7 @@ public class Resources {
   /**
    * The speed at which the robot moves forward in degrees per second.
    */
-  public static final int FORWARD_SPEED = 200;
+  public static final int FORWARD_SPEED = 250;
   
   /**
    * The speed at which the robot rotates in degrees per second.
